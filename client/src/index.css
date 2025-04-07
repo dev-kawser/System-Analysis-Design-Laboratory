@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Outfit", sans-serif;
+    scroll-behavior: smooth;
+}
+
+body{
+    background-color: #263238;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+::-webkit-scrollbar{
+    display: none;
+}
+
+@layer utilities{
+    .head {
+        @apply sm:text-4xl text-3xl font-semibold m-2;
+    }
+    .sub-head {
+        @apply sm:text-4xl text-3xl font-semibold text-offwhite m-2;
+    }
+}
