@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { NavLink } from "react-router-dom"
 import { useAppContext } from "../context/AppContext"
 import { assets } from "../assets/assets"
@@ -7,12 +7,19 @@ const Navbar = () => {
 
     const [open, setOpen] = useState(false)
 
-    const { user, setUser, showUserLogin, setShowUserLogin, navigate} = useAppContext();
+    const { user, setUser, setShowUserLogin, navigate, searchQuery, setSearchQuery} = useAppContext();
 
     const logout = async () => {
         setUser(null);
         navigate('/');
     }
+
+    useEffect(() => {
+        if (searchQuery.length > 0) {
+            navigate("/products")
+        }
+    }, [searchQuery])
+
 
 
     return (
@@ -32,7 +39,7 @@ const Navbar = () => {
                 <NavLink to='/contact'>Contact</NavLink>
 
                 <div className="hidden lg:flex items-center text-sm gap-2 border hover:border-2  px-3 rounded-full">
-                    <input className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500" type="text" placeholder="Search products" />
+                    <input onChange={(e)=>setSearchQuery(e.target.value)} className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500" type="text" placeholder="Search products" />
                     <img src={assets.search_icon} alt="search" className="w-4 h-4" />
                 </div>
 
