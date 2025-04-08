@@ -1,2 +1,5 @@
 npm install
 npm install react-router-dom react-hot-toast
+npm init -y
+npm install bcryptjs cloudinary cookie-parser cors dotenv express jsonwebtoken mongoose multer stripe
+npm install nodemon --save-dev
