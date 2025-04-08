@@ -2,11 +2,14 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser"
 import cookieParser from "cookie-parser";
+import { connectDB } from "./config/db.js";
 
 
 //app config
 const app = express();
 const port = process.env.PORT || 4000;
+
+await connectDB();
 
 // Allow multiple origins
 const allowedOrigins = ['http://localhost:5173'];
