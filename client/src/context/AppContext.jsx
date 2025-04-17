@@ -91,7 +91,6 @@ export const AppContextProvider = ({ children }) => {
         toast.success("Added to Cart");
     };
 
-
     //update cart items
     const updateCartItems = (itemId, quantity) =>{
         let cartData = structuredClone(cartItems);
@@ -139,6 +138,45 @@ export const AppContextProvider = ({ children }) => {
         fetchAdmin();
         fetchUser();
     },[]);
+
+    //update cart items in database
+    // useEffect( ()=>{
+    //     const updateCart = async () => {
+    //         try {
+    //             const { data } = await axios.post('/api/cart/update', {cartItems})
+
+    //             if (!data.success) {
+    //                 toast.error(data.message)
+    //             }
+    //         } catch (error) {
+    //             toast.error(error.message)
+    //         }
+    //     }
+
+    //     if (user) {
+    //         updateCart()
+    //     }
+    // }, [cartItems])
+    useEffect(() => {
+        const updateCart = async () => {
+            try {
+                const { data } = await axios.post('/api/cart/update', {
+                    cartItems,
+                    userId: user._id // Include userId in the request
+                });
+
+                if (!data.success) {
+                    toast.error(data.message);
+                }
+            } catch (error) {
+                toast.error(error.response?.data?.message || "Failed to update cart");
+            }
+        };
+
+        if (user?._id) { // Only run if user exists and has _id
+            updateCart();
+        }
+    }, [cartItems, user]); // Add user to dependency array
 
     const value ={
         navigate,

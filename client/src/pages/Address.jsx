@@ -1,5 +1,7 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { assets } from "../assets/assets"
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const InputField = ({ type, placeholder, name, handleChange, address }) => (
     <input
@@ -15,7 +17,7 @@ const InputField = ({ type, placeholder, name, handleChange, address }) => (
 
 const Address = () => {
 
-
+    const { axios, user, navigate } = useAppContext();
     const [address, setAddress] = useState({
         firstName: '',
         lastName: '',
@@ -39,7 +41,29 @@ const Address = () => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
+        try {
+            // Validate required fields
+            // if (!address.lastName) {
+            //     return toast.error("Last name is required");
+            // }
+            const { data } = await axios.post('/api/address/add', { address,  userId: user._id });
+
+            if (data.success) {
+                toast.success(data.message)
+                navigate('/cart')
+            } else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
     }
+
+    useEffect( ()=> {
+        if (!user) {
+            navigate('/cart');
+        }
+    }, [])
 
     return (
         <div className="my-20 p-6">
@@ -53,7 +77,7 @@ const Address = () => {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <InputField handleChange={handleChange} address={address} name='firstName' type="text" placeholder="First Name" />
-                                <InputField handleChange={handleChange} address={address} name='flastName' type="text" placeholder="Last Name" />
+                                <InputField handleChange={handleChange} address={address} name='lastName' type="text" placeholder="Last Name" />
                             </div>
 
                             <InputField handleChange={handleChange} address={address} name='email' type="email" placeholder="Email Address" />
