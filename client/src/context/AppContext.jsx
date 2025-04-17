@@ -38,6 +38,21 @@ export const AppContextProvider = ({ children }) => {
         }
     }
 
+    //fetch user auth status, user data and cart details
+    const fetchUser = async () => {
+        try {
+            const { data } = await axios.get('/api/user/is-auth');
+
+            if (data.success) {
+                setUser(data.user);
+                setCartItems(data.user.cartItems);
+            }
+        } catch (error) {
+            setUser(null);
+            console.log(error);
+        }
+    }
+
 
     //fetching all products
     const fetchProducts = async () => {
@@ -55,18 +70,26 @@ export const AppContextProvider = ({ children }) => {
     }
 
     //adding product to cart
-    const addToCart = (itemId) => {
-        let cartData = structuredClone(cartItems);
+    // const addToCart = (itemId) => {
+    //     let cartData = structuredClone(cartItems);
 
-        if (cartData[itemId]) {
-            cartData[itemId] += 1;
-        }
-        else{
-            cartData[itemId] = 1;
-        }
-        setCartItems(cartData);
+    //     if (cartData[itemId]) {
+    //         cartData[itemId] += 1;
+    //     }
+    //     else{
+    //         cartData[itemId] = 1;
+    //     }
+    //     setCartItems(cartData);
+    //     toast.success("Added to Cart");
+    // }
+    const addToCart = (itemId) => {
+        setCartItems(prevItems => {
+            const newItems = { ...prevItems }; // Create a copy
+            newItems[itemId] = (newItems[itemId] || 0) + 1; // Safely increment
+            return newItems;
+        });
         toast.success("Added to Cart");
-    }
+    };
 
 
     //update cart items
@@ -114,6 +137,7 @@ export const AppContextProvider = ({ children }) => {
     useEffect( ()=> {
         fetchProducts();
         fetchAdmin();
+        fetchUser();
     },[]);
 
     const value ={
@@ -138,6 +162,7 @@ export const AppContextProvider = ({ children }) => {
         getCartAmount,
         getCartCount,
         axios,
+        fetchUser,
 
     }
 
