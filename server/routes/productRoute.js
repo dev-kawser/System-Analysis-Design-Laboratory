@@ -5,10 +5,7 @@ import authAdmin from '../middleware/authAdmin.js';
 
 const productRouter = express.Router();
 
-productRouter.post('/add', authAdmin, upload.array('images', 10), addProduct);
-
-// productRouter.post('/remove', authAdmin, removeProduct);
-
+productRouter.post('/add', authAdmin, upload.array(['images']), addProduct);
 productRouter.post('/single', singleProduct);
 productRouter.get('/list', listProducts);
 productRouter.post('/stock', authAdmin, updateStock);
