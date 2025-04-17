@@ -1,20 +1,13 @@
 import { v2 as cloudinary  } from "cloudinary";
-import product from "../models/Product.js";
+import productModel from "../models/Product.js";
 
 //add product : /api/product/add
 const addProduct = async ( req, res ) => {
     try {
-        // const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
         let productData = JSON.parse(req.body.productData)
 
         const images = req.files;
 
-        // const image1 = req.files.image1 && req.files.image1[0]
-        // const image2 = req.files.image2 && req.files.image2[0]
-        // const image3 = req.files.image3 && req.files.image3[0]
-        // const image4 = req.files.image4 && req.files.image4[0]
-
-        // const images = [image1, image2, image3, image4].filter((item) => item !== undefined)
 
         let imagesUrl = await Promise.all(
             images.map(async (item) => {
@@ -23,29 +16,9 @@ const addProduct = async ( req, res ) => {
             })
         )
 
-        await Product.create({...productData, image: imagesUrl})
+        await productModel.create({...productData, image: imagesUrl})
 
         res.json({success:true, message: "Product Added"})
-
-
-        // const productData = {
-        //     name,
-        //     description,
-        //     category,
-        //     price: Number(price),
-        //     subCategory,
-        //     bestseller: bestseller === 'true' ? true : false,
-        //     sizes: JSON.parse(sizes),
-        //     image: imagesUrl,
-        //     date: Date.now()
-        // }
-
-        // console.log(name, description, price, category, subCategory, sizes, bestseller)
-        // console.log(productData);
-        // const product = new productModel(productData);
-        // await product.save();
-
-        // res.json({success:true, message: "Product Added"})
 
     } catch (error) {
         console.log(error.message)
@@ -90,11 +63,11 @@ const singleProduct = async ( req, res ) => {
     }
 }
 
-//gupdate product stock : /api/product/stock
+//update product stock : /api/product/stock
 const updateStock = async ( req, res ) => {
     try {
-        const { id, inStock } = req.body;
-        await Product.findByIdAndUpdate(id, { inStock })
+        const { id, ins } = req.body;
+        await productModel.findByIdAndUpdate(id, { inStock: ins })
 
         res.json({ success: true, message: "Stock Updated" })
 
