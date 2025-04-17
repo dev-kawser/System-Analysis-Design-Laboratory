@@ -4,7 +4,7 @@ const authAdmin = async ( req, res, next ) => {
 
     const { adminToken } = req.cookies;
 
-    if(!sellerToken) {
+    if(!adminToken) {
         return res.json({ success: false, message: "Not authorized" });
     }
 

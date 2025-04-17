@@ -18,13 +18,13 @@ import Order from "./pages/seller/Order";
 
 function App() {
 
-    const isSellerPath = useLocation().pathname.includes('seller');
-    const { showUserLogin, isSeller } = useAppContext();
+    const isAdminPath = useLocation().pathname.includes('admin');
+    const { showUserLogin, isAdmin } = useAppContext();
 
 
     return (
         <div className="">
-            {!isSellerPath && (
+            {!isAdminPath && (
                 <div className="px-6 md:px-16 lg:px-24 xl:px-32">
                     <Navbar />
                 </div>
@@ -34,7 +34,7 @@ function App() {
 
             <Toaster/>
 
-            <div className={`${isSellerPath ? '' : 'px-6 md:px-16 lg:px-24 xl:px-32'}`}>
+            <div className={`${isAdminPath ? '' : 'px-6 md:px-16 lg:px-24 xl:px-32'}`}>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/products" element={<AllProducts />} />
@@ -43,15 +43,14 @@ function App() {
                     <Route path="/add-address" element={<Address />} />
                     <Route path="/my-orders" element={<MyOrders />} />
 
-                    <Route path="/seller" element={isSeller ? <SellerLayout/> : <SellerLogin/>}>
-                        <Route index element={isSeller ? <AddProduct/> : null} />
+                    <Route path="/admin" element={isAdmin ? <SellerLayout/> : <SellerLogin/>}>
+                        <Route index element={isAdmin ? <AddProduct/> : null} />
                         <Route path="product-list" element={<ProductList/>} />
                         <Route path="orders" element={<Order/>} />
 
                     </Route>
                 </Routes>
             </div>
-            {/* {!isSellerPath && } */}
         </div>
     )
 }

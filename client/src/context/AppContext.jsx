@@ -2,6 +2,10 @@ import { createContext, useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { dummyProducts } from "../assets/assets";
 import toast from "react-hot-toast";
+import axios from 'axios';
+
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
 export const AppContext = createContext();
 
@@ -11,31 +15,81 @@ export const AppContextProvider = ({ children }) => {
 
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [isSeller, setIsSeller] = useState(false)
+    const [isAdmin, setIsAdmin] = useState(false)
     const [showUserLogin, setShowUserLogin] = useState(false)
     const [products, setProducts] = useState([])
     const [cartItems, setCartItems] = useState({})
     const [searchQuery, setSearchQuery] = useState({})
 
 
+    //fetch admin status
+    const fetchAdmin = async () => {
+        try {
+            const { data } = await axios.get('/api/admin/is-auth');
+
+            if (data.success) {
+                setIsAdmin(true);
+            } else{
+                setIsAdmin(false);
+            }
+        } catch (error) {
+            setIsAdmin(false);
+            console.log(error);
+        }
+    }
+
+    //fetch user auth status, user data and cart details
+    const fetchUser = async () => {
+        try {
+            const { data } = await axios.get('/api/user/is-auth');
+
+            if (data.success) {
+                setUser(data.user);
+                setCartItems(data.user.cartItems);
+            }
+        } catch (error) {
+            setUser(null);
+            console.log(error);
+        }
+    }
+
+
     //fetching all products
     const fetchProducts = async () => {
-        setProducts(dummyProducts)
+        try {
+            const { data } = await axios.get('/api/product/list');
+
+            if (data.success) {
+                setProducts(data.products)
+            } else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
     }
 
     //adding product to cart
-    const addToCart = (itemId) => {
-        let cartData = structuredClone(cartItems);
+    // const addToCart = (itemId) => {
+    //     let cartData = structuredClone(cartItems);
 
-        if (cartData[itemId]) {
-            cartData[itemId] += 1;
-        }
-        else{
-            cartData[itemId] = 1;
-        }
-        setCartItems(cartData);
+    //     if (cartData[itemId]) {
+    //         cartData[itemId] += 1;
+    //     }
+    //     else{
+    //         cartData[itemId] = 1;
+    //     }
+    //     setCartItems(cartData);
+    //     toast.success("Added to Cart");
+    // }
+    const addToCart = (itemId) => {
+        setCartItems(prevItems => {
+            const newItems = { ...prevItems }; // Create a copy
+            newItems[itemId] = (newItems[itemId] || 0) + 1; // Safely increment
+            return newItems;
+        });
         toast.success("Added to Cart");
-    }
+    };
 
 
     //update cart items
@@ -82,14 +136,16 @@ export const AppContextProvider = ({ children }) => {
 
     useEffect( ()=> {
         fetchProducts();
+        fetchAdmin();
+        fetchUser();
     },[]);
 
     const value ={
         navigate,
         user,
         setUser,
-        isSeller,
-        setIsSeller,
+        isAdmin,
+        setIsAdmin,
         showUserLogin,
         setShowUserLogin,
         products,
@@ -105,6 +161,8 @@ export const AppContextProvider = ({ children }) => {
         setSearchQuery,
         getCartAmount,
         getCartCount,
+        axios,
+        fetchUser,
 
     }
 
